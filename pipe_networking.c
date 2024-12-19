@@ -11,6 +11,16 @@
   =========================*/
 int server_setup() {
   int from_client = 0;
+  int p1 = mkfifo("WKP", 0600);
+  if (p1 < 0){
+    perror("Pipe creation failed");
+    exit(1);
+  }
+  from_client = open("WKP", O_WRONLY);
+  if (from_client < 0){
+    perror("Failed to open pipe");
+  }
+  remove("WKP");
   return from_client;
 }
 
