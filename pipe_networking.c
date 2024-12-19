@@ -36,12 +36,24 @@ int server_setup() {
 int server_handshake(int *to_client) {
   int from_client;
   int wkp = server_setup();
-  int wkp = open("WKP", O_RDONLY);
   read(wkp, from_client, sizeof(int));
-  remove("WKP");
   int pp = open("PP", O_WRONLY);
-  write(pp,pid,sizeof(int));
-  server_connect
+  if (pp < 0){
+    perror("Failed to open PP");
+    exit(1);
+  }
+  srand(getpid());
+  int synAck = rand();
+  write(pp,synAck,sizeof(int));
+  close(pp);
+  pp = open("PP", O_RDONLY);
+  if (pp < 0){
+    perror("Failed to open PP");
+    exit(1);
+  }
+  read(pp, from_client, sizeof(int));
+  close(pp);
+  remove("PP");
   return from_client;
 }
 
@@ -63,9 +75,26 @@ int client_handshake(int *to_server) {
     exit(1);
   }
   int wkp = open("WKP", O_WRONLY);
-  write(wkp, p1, sizeof(p1));
+  if (wkp < 0){
+    perror("Failed to open WKP");
+    exit(1);
+  }
+  write(wkp, p1, sizeof(int));
+  close(wkp);
   int pp = open("PP", O_RDONLY);
+  if (pp < 0){
+    perror("Failed to open PP");
+    exit(1);
+  }
   read(pp,from_server,sizeof(int));
+  from_server++;
+  close(pp);
+  pp = open("PP", O_WRONLY);
+  if (pp < 0){
+    perror("Failed to open PP");
+    exit(1);
+  }
+  write(pp, from_server, sizeof(int));
   close(pp);
   return from_server;
 }
@@ -80,5 +109,6 @@ int client_handshake(int *to_server) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int server_connect(int from_client) {
+  int to_client;
   return to_client;
 }
