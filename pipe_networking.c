@@ -16,7 +16,7 @@ int server_setup() {
     perror("Pipe creation failed");
     exit(1);
   }
-  from_client = open("WKP", O_WRONLY);
+  from_client = open("WKP", O_RDONLY);
   if (from_client < 0){
     perror("Failed to open pipe");
   }
@@ -25,7 +25,7 @@ int server_setup() {
 }
 
 /*=========================
-  server_handshake 
+  server_handshake
   args: int * to_client
 
   Performs the server side pipe 3 way handshake.
@@ -35,6 +35,13 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client;
+  int wkp = server_setup();
+  int wkp = open("WKP", O_RDONLY);
+  read(wkp, from_client, sizeof(int));
+  remove("WKP");
+  int pp = open("PP", O_WRONLY);
+  write(pp,pid,sizeof(int));
+  server_connect
   return from_client;
 }
 
@@ -55,7 +62,11 @@ int client_handshake(int *to_server) {
     perror("Pipe creation failed");
     exit(1);
   }
-  
+  int wkp = open("WKP", O_WRONLY);
+  write(wkp, p1, sizeof(p1));
+  int pp = open("PP", O_RDONLY);
+  read(pp,from_server,sizeof(int));
+  close(pp);
   return from_server;
 }
 
@@ -69,8 +80,5 @@ int client_handshake(int *to_server) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int server_connect(int from_client) {
-  int to_client  = 0;
   return to_client;
 }
-
-
