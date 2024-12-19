@@ -50,6 +50,12 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
   int from_server;
+  int p1 = mkfifo("PP", 0600);
+  if (p1 < 0){
+    perror("Pipe creation failed");
+    exit(1);
+  }
+  
   return from_server;
 }
 
