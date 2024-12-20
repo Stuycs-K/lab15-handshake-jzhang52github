@@ -43,7 +43,9 @@ int server_handshake(int *to_client) {
     exit(1);
   }
   srand(getpid());
-  int synAck = rand();
+  int ran = rand();
+  char synAck[256];
+  sprintf(synAck, "%d", ran);
   write(pp,synAck,sizeof(int));
   close(pp);
   pp = open("PP", O_RDONLY);
@@ -86,7 +88,9 @@ int client_handshake(int *to_server) {
     perror("Failed to open PP");
     exit(1);
   }
-  read(pp,from_server,sizeof(int));
+  char temp[256];
+  read(pp,temp,255);
+  from_server = atoi(temp);
   from_server++;
   close(pp);
   pp = open("PP", O_WRONLY);
