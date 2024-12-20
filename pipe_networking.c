@@ -81,6 +81,8 @@ int client_handshake(int *to_server) {
     perror("Failed to open WKP");
     exit(1);
   }
+  char temp[256];
+  sprintf(temp, "%d", p1);
   write(wkp, p1, sizeof(int));
   close(wkp);
   int pp = open("PP", O_RDONLY);
@@ -89,7 +91,7 @@ int client_handshake(int *to_server) {
     exit(1);
   }
   char temp[256];
-  read(pp,temp,255);
+  read(pp,temp,sizeof(int));
   from_server = atoi(temp);
   from_server++;
   close(pp);
