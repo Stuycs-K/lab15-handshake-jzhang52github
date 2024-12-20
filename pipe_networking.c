@@ -38,8 +38,8 @@ int server_handshake(int *to_client) {
   int wkp = server_setup();
   char ppName[256];
   read(wkp, ppName, sizeof(ppName));
-  int pp = open(ppName, O_WRONLY);
-  if (pp < 0){
+  *to_client = open(ppName, O_WRONLY);
+  if (*to_client < 0){
     perror("Failed to open PP");
     exit(1);
   }
@@ -47,18 +47,17 @@ int server_handshake(int *to_client) {
   int ran = rand();
   char synAck[256];
   sprintf(synAck, "%d", ran);
-  write(pp,synAck,sizeof(synAck));
-  close(pp);
-  pp = open(ppName, O_RDONLY);
-  if (pp < 0){
+  write(*to_client,synAck,sizeof(synAck));
+  close(*to_client);
+  from_client = open(ppName, O_RDONLY);
+  if (from_client < 0){
     perror("Failed to open PP");
     exit(1);
   }
   char temp[256];
-  read(pp, temp, sizeof(temp));
-  from_client = atoi(temp);
-  close(pp);
-  remove(ppName);
+  read(from_client, temp, sizeof(temp));
+  int msg = atoi(temp);
+  printf("Message from client: %d\n", msg);
   return from_client;
 }
 
@@ -76,8 +75,8 @@ int client_handshake(int *to_server) {
   int from_server;
   char ppName[256];
   sprintf(ppName, "%d", getpid());
-  int p1 = mkfifo(ppName, 0600);
-  if (p1 < 0){
+  *to_server = mkfifo(ppName, 0600);
+  if (*to_server < 0){
     perror("Pipe creation failed");
     exit(1);
   }
@@ -88,24 +87,24 @@ int client_handshake(int *to_server) {
   }
   write(wkp, ppName, sizeof(ppName));
   close(wkp);
-  int pp = open(ppName, O_RDONLY);
-  if (pp < 0){
+  from_server = open(ppName, O_RDONLY);
+  if (from_server < 0){
     perror("Failed to open PP");
     exit(1);
   }
   char temp[256];
-  read(pp,temp,sizeof(temp));
-  from_server = atoi(temp);
-  int updatedMsg = from_server+1;
+  read(from_server,temp,sizeof(temp));
+  int msg = atoi(temp);
+  printf("Message from server: %d\n", msg);
+  int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
-  close(pp);
-  pp = open(ppName, O_WRONLY);
-  if (pp < 0){
+  close(from_server);
+  from_server = open(ppName, O_WRONLY);
+  if (from_server < 0){
     perror("Failed to open PP");
     exit(1);
   }
-  write(pp, temp, sizeof(temp));
-  close(pp);
+  write(from_server, temp, sizeof(temp));
   return from_server;
 }
 
