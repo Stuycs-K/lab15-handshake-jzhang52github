@@ -37,7 +37,7 @@ int server_handshake(int *to_client) {
   int from_client;
   int wkp = server_setup();
   char ppName[256];
-  read(wkp, ppName, sizeof(int));
+  read(wkp, ppName, sizeof(ppName));
   int pp = open(ppName, O_WRONLY);
   if (pp < 0){
     perror("Failed to open PP");
@@ -47,16 +47,18 @@ int server_handshake(int *to_client) {
   int ran = rand();
   char synAck[256];
   sprintf(synAck, "%d", ran);
-  write(pp,synAck,sizeof(int));
+  write(pp,synAck,sizeof(synAck));
   close(pp);
-  pp = open("PP", O_RDONLY);
+  pp = open(ppName, O_RDONLY);
   if (pp < 0){
     perror("Failed to open PP");
     exit(1);
   }
-  read(pp, from_client, sizeof(int));
+  char temp[256];
+  read(pp, temp, sizeof(temp));
+  from_client = atoi(temp);
   close(pp);
-  remove("PP");
+  remove(ppName);
   return from_client;
 }
 
@@ -84,24 +86,25 @@ int client_handshake(int *to_server) {
     perror("Failed to open WKP");
     exit(1);
   }
-  write(wkp, ppName, sizeof(int));
+  write(wkp, ppName, sizeof(ppName));
   close(wkp);
-  int pp = open("PP", O_RDONLY);
+  int pp = open(ppName, O_RDONLY);
   if (pp < 0){
     perror("Failed to open PP");
     exit(1);
   }
   char temp[256];
-  read(pp,temp,sizeof(int));
+  read(pp,temp,sizeof(temp));
   from_server = atoi(temp);
-  from_server++;
+  int updatedMsg = from_server+1;
+  sprintf(temp, "%d", updatedMsg);
   close(pp);
-  pp = open("PP", O_WRONLY);
+  pp = open(ppName, O_WRONLY);
   if (pp < 0){
     perror("Failed to open PP");
     exit(1);
   }
-  write(pp, from_server, sizeof(int));
+  write(pp, temp, sizeof(temp));
   close(pp);
   return from_server;
 }
