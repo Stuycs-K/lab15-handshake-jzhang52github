@@ -36,8 +36,9 @@ int server_setup() {
 int server_handshake(int *to_client) {
   int from_client;
   int wkp = server_setup();
-  read(wkp, from_client, sizeof(int));
-  int pp = open("PP", O_WRONLY);
+  char ppName[256];
+  read(wkp, ppName, sizeof(int));
+  int pp = open(ppName, O_WRONLY);
   if (pp < 0){
     perror("Failed to open PP");
     exit(1);
@@ -71,7 +72,9 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
   int from_server;
-  int p1 = mkfifo("PP", 0600);
+  char ppName[256];
+  sprintf(ppName, "%d", getpid());
+  int p1 = mkfifo(ppName, 0600);
   if (p1 < 0){
     perror("Pipe creation failed");
     exit(1);
@@ -81,9 +84,7 @@ int client_handshake(int *to_server) {
     perror("Failed to open WKP");
     exit(1);
   }
-  char temp[256];
-  sprintf(temp, "%d", p1);
-  write(wkp, p1, sizeof(int));
+  write(wkp, ppName, sizeof(int));
   close(wkp);
   int pp = open("PP", O_RDONLY);
   if (pp < 0){
