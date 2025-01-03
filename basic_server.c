@@ -9,7 +9,9 @@ int main() {
   write(to_client, "b", 1);
   char buffer[2];
   buffer[2] = '\0';
-  read(from_client, buffer, sizeof(buffer));
+  if (read(from_client, buffer, sizeof(buffer)) < 0){
+    perror("Read from client failed");
+  }
   printf("From client: %s\n", buffer);
   return 0;
 }
