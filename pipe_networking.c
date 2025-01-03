@@ -52,7 +52,7 @@ int server_handshake(int *to_client) {
   int ran = rand();
   char synAck[256];
   sprintf(synAck, "%d", ran);
-  write(*to_client,synAck,sizeof(synAck));
+  write(*to_client,synAck,strlen(synAck)+1);
   printf("Server writing %d to client\n", ran);
   char temp[256];
   read(from_client, temp, sizeof(temp));
@@ -89,6 +89,7 @@ int client_handshake(int *to_server) {
     exit(1);
   }
   write(*to_server, ppName, strlen(ppName)+1);
+  printf("Wrote SYN %s to server\n", ppName);
   printf("Client waiting for PP connection\n");
   from_server = open(ppName, O_RDONLY);
   if (from_server < 0){
