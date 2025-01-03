@@ -108,8 +108,7 @@ int client_handshake(int *to_server) {
   int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
   write(*to_server, temp, strlen(temp)+1);
-  *to_server = from_server;
-  return *to_server;
+  return from_server;
 }
 
 
