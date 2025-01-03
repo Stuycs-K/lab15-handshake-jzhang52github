@@ -101,6 +101,7 @@ int client_handshake(int *to_server) {
     exit(1);
   }
   remove(ppName);
+  printf("Client removed PP\n");
   char temp[256];
   read(from_server,temp,sizeof(temp));
   int msg = atoi(temp);
