@@ -84,7 +84,7 @@ int client_handshake(int *to_server) {
   }
   *to_server = open("WKP", O_WRONLY);
   printf("Client opened WKP\n");
-  if (wkp < 0){
+  if (*to_server < 0){
     perror("Failed to open WKP");
     exit(1);
   }
