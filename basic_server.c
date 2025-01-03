@@ -12,12 +12,12 @@ int main() {
     exit(1);
   }
   char buffer[2];
-  buffer[2] = '\0';
   error = read(from_client, buffer, sizeof(buffer));
   if (error < 0) {
     perror("Read from client failed");
     exit(1);
   }
+  buffer[error] = '\0';
   printf("From client: %s\n", buffer);
   return 0;
 }
