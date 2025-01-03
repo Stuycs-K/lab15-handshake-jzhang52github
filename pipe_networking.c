@@ -11,7 +11,7 @@
   =========================*/
 int server_setup() {
   int from_client = 0;
-  int p1 = mkfifo("WKP", 0600);
+  int p1 = mkfifo("WKP", 0666);
   printf("Server created WKP\n");
   if (p1 < 0){
     perror("Pipe creation failed");
@@ -105,7 +105,7 @@ int client_handshake(int *to_server) {
   sprintf(temp, "%d", updatedMsg);
   printf("Client sending %s to server\n", temp);
   write(*to_server, temp, strlen(temp)+1);
-  return *to_server;
+  return from_server;
 }
 
 
