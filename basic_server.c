@@ -11,7 +11,7 @@ int main() {
   //   perror("Write to client failed");
   //   exit(1);
   // }
-  // char buffer[2];
+  char buffer[2];
   int error = read(from_client, buffer, sizeof(buffer));
   if (error < 0) {
     perror("Read from client failed");
