@@ -38,9 +38,9 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client;
-  int wkp = server_setup();
+  from_client = server_setup();
   char ppName[256];
-  read(wkp, ppName, sizeof(ppName));
+  read(from_client, ppName, sizeof(ppName));
   printf("Server read SYN: %s\n", ppName);
   *to_client = open(ppName, O_WRONLY);
   printf("Server opened PP\n");
@@ -54,17 +54,11 @@ int server_handshake(int *to_client) {
   sprintf(synAck, "%d", ran);
   write(*to_client,synAck,sizeof(synAck));
   printf("Server writing %d to client\n", ran);
-  from_client = open(ppName, O_RDONLY);
-  if (from_client < 0){
-    perror("Failed to open PP");
-    exit(1);
-  }
   char temp[256];
   read(from_client, temp, sizeof(temp));
   int msg = atoi(temp);
   printf("Server reading %d from client\n", msg);
-  close(from_client);
-  return *to_client;
+  return from_client;
 }
 
 
@@ -94,29 +88,24 @@ int client_handshake(int *to_server) {
     perror("Failed to open WKP");
     exit(1);
   }
-  write(wkp, ppName, sizeof(ppName));
-  close(wkp);
+  write(wkp, ppName, strlen(ppName)+1);
   printf("Client waiting for PP connection\n");
   from_server = open(ppName, O_RDONLY);
   if (from_server < 0){
     perror("Failed to open PP");
     exit(1);
   }
+  remove(ppName);
   char temp[256];
   read(from_server,temp,sizeof(temp));
   int msg = atoi(temp);
   printf("Client reading %d from server\n", msg);
   int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
-  close(from_server);
-  *to_server = open(ppName, O_WRONLY);
-  if (*to_server < 0){
-    perror("Failed to open PP");
-    exit(1);
-  }
   printf("Client sending %s to server\n", temp);
-  write(*to_server, temp, sizeof(temp));
-  return *to_server;
+  write(wkp, temp, strlen(temp)+1);
+  *to_server = wkp;
+  return from_server;
 }
 
 
