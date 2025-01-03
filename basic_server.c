@@ -10,6 +10,6 @@ int main() {
   char buffer[2];
   buffer[2] = '\0';
   read(from_client, buffer, sizeof(buffer));
-  printf("Buffer: %s\n", buffer);
+  printf("From client: %s\n", buffer);
   return 0;
 }

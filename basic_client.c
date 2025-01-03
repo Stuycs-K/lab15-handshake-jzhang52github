@@ -11,6 +11,6 @@ int main() {
   char buffer[2];
   buffer[2] = '\0';
   read(from_server, buffer, sizeof(buffer));
-  printf("Buffer: %s\n", buffer);
+  printf("From server: %s\n", buffer);
   return 0;
 }
