@@ -11,6 +11,7 @@ int main() {
     perror("Write to server failed");
     exit(1);
   }
+  printf("To server: a\n");
   // char buffer[2];
   // error = read(from_server, buffer, sizeof(buffer));
   // if (error < 0){
