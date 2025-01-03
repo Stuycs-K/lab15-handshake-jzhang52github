@@ -76,7 +76,7 @@ int client_handshake(int *to_server) {
   int pp;
   char ppName[256];
   sprintf(ppName, "%d", getpid());
-  pp = mkfifo(ppName, 0600);
+  pp = mkfifo(ppName, 0666);
   printf("Client created PP\n");
   if (pp < 0){
     perror("Pipe creation failed");
