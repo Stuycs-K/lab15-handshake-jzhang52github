@@ -12,7 +12,7 @@ int main() {
   //   exit(1);
   // }
   // char buffer[2];
-  error = read(from_client, buffer, sizeof(buffer));
+  int error = read(from_client, buffer, sizeof(buffer));
   if (error < 0) {
     perror("Read from client failed");
     exit(1);
