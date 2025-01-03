@@ -52,7 +52,7 @@ int server_handshake(int *to_client) {
   int ran = rand();
   char synAck[256];
   sprintf(synAck, "%d", ran);
-  write(*to_client,synAck,strlen(synAck)+1);
+  write(*to_client,synAck,sizeof(synAck));
   char temp[256];
   read(from_client, temp, sizeof(temp));
   int msg = atoi(temp);
@@ -92,7 +92,7 @@ int client_handshake(int *to_server) {
     perror("Failed to open WKP");
     exit(1);
   }
-  write(*to_server, ppName, strlen(ppName)+1);
+  write(*to_server, ppName, sizeof(ppName));
   printf("Wrote SYN %s to server\n", ppName);
   printf("Client waiting for PP connection\n");
   from_server = open(ppName, O_RDONLY);
@@ -107,7 +107,7 @@ int client_handshake(int *to_server) {
   int msg = atoi(temp);
   int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
-  write(*to_server, temp, strlen(temp)+1);
+  write(*to_server, temp, sizeof(temp));
   return from_server;
 }
 

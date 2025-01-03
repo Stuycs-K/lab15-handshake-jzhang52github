@@ -6,14 +6,14 @@ int main() {
 
   from_client = server_handshake( &to_client );
 
-  // int error = write(to_client, "b", 1);
-  // if (error < 0) {
-  //   perror("Write to client failed");
-  //   exit(1);
-  // }
-  // printf("To client: b\n");
+  int error = write(to_client, "b", 1);
+  if (error < 0) {
+    perror("Write to client failed");
+    exit(1);
+  }
+  printf("To client: b\n");
   char buffer[2];
-  int error = read(from_client, buffer, sizeof(buffer));
+  error = read(from_client, buffer, sizeof(buffer));
   if (error < 0) {
     perror("Read from client failed");
     exit(1);
