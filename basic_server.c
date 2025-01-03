@@ -6,10 +6,13 @@ int main() {
 
   from_client = server_handshake( &to_client );
 
-  write(to_client, "b", 1);
+  int error = write(to_client, "b", 1);
+  if (error < 0) {
+    perror("Write to client failed");
+    exit(1);
+  }
   char buffer[2];
   buffer[2] = '\0';
-  int error;
   error = read(from_client, buffer, sizeof(buffer));
   if (error < 0) {
     perror("Read from client failed");
