@@ -53,11 +53,15 @@ int server_handshake(int *to_client) {
   char synAck[256];
   sprintf(synAck, "%d", ran);
   write(*to_client,synAck,strlen(synAck)+1);
-  printf("Server writing %d to client\n", ran);
   char temp[256];
   read(from_client, temp, sizeof(temp));
   int msg = atoi(temp);
-  printf("Server reading %d from client\n", msg);
+  if (msg - 1 == ran){
+    printf("Handshake established\n");
+  }
+  else{
+    printf("Handshake failed\n");
+  }
   return from_client;
 }
 
@@ -100,10 +104,8 @@ int client_handshake(int *to_server) {
   char temp[256];
   read(from_server,temp,sizeof(temp));
   int msg = atoi(temp);
-  printf("Client reading %d from server\n", msg);
   int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
-  printf("Client sending %s to server\n", temp);
   write(*to_server, temp, strlen(temp)+1);
   return from_server;
 }
