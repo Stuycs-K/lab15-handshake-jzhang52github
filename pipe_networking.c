@@ -82,13 +82,13 @@ int client_handshake(int *to_server) {
     perror("Pipe creation failed");
     exit(1);
   }
-  int wkp = open("WKP", O_WRONLY);
+  *to_server = open("WKP", O_WRONLY);
   printf("Client opened WKP\n");
   if (wkp < 0){
     perror("Failed to open WKP");
     exit(1);
   }
-  write(wkp, ppName, strlen(ppName)+1);
+  write(*to_server, ppName, strlen(ppName)+1);
   printf("Client waiting for PP connection\n");
   from_server = open(ppName, O_RDONLY);
   if (from_server < 0){
@@ -103,8 +103,7 @@ int client_handshake(int *to_server) {
   int updatedMsg = msg+1;
   sprintf(temp, "%d", updatedMsg);
   printf("Client sending %s to server\n", temp);
-  write(wkp, temp, strlen(temp)+1);
-  *to_server = wkp;
+  write(*to_server, temp, strlen(temp)+1);
   return from_server;
 }
 
